@@ -28,7 +28,7 @@
             return baseUrl + item.@art;
         if (item.@banner != null || item.@banner != "")
             return baseUrl + item.@banner;
-        return plugin.config.path + "plex-logo.png";
+        return plugin.path + "plex-logo.png";
     }
     
     plugin.addURI("plex:show:([a-z0-9\/]*)", function(page, key) {            
@@ -78,7 +78,7 @@
 
         var doc = new XML(showtime.httpGet(baseUrl + "/library/sections/" + section + "/all/").toString());
         
-        page.metadata.logo = plugin.config.path + "plex-logo.png";
+        page.metadata.logo = plugin.path + "plex-logo.png";
         page.metadata.title = doc.@title1;
 
 		if (doc.@viewGroup == "movie") {
@@ -113,13 +113,13 @@
 
         var doc = new XML(showtime.httpGet(baseUrl + "/library/sections/").toString());
         
-        page.metadata.logo = plugin.config.path + "plex-logo.png";
+        page.metadata.logo = plugin.path + "plex-logo.png";
         page.metadata.title = doc.@title1;
 
         for each (var section in doc.Directory) {
             var metadata = {
                 title: section.@title,
-                icon: plugin.config.path + "plex-logo.png"
+                icon: plugin.path + "plex-logo.png"
             };
             page.appendItem("plex:section:" + section.@key, "directory", metadata);
         }
@@ -127,9 +127,9 @@
     });
 
     //settings
-    plugin.service = showtime.createService("Plex", "plex:start", "tv", false, plugin.config.path + "plex-logo.png");
-    plugin.settings = plugin.createSettings("Plex", "video", plugin.config.path + "plex-logo.png", "Plex Client");
-    plugin.settings.createInfo("info", plugin.config.path + "plex-logo.png", "Plex Client");
+    plugin.createService("Plex", "plex:start", "video", true, plugin.path + "plex-logo.png");
+    /*plugin.settings = plugin.createSettings("Plex", "video", plugin.path + "plex-logo.png", "Plex Client");
+    plugin.settings.createInfo("info", plugin.path + "plex-logo.png", "Plex Client");
 
     plugin.settings.createBool("enabled", "Plex", false, function(v) {
         plugin.config.URIRouting = v;
@@ -138,6 +138,6 @@
     
     plugin.settings.createString("baseUrl", "Backend Url including Port", "", function(v) {
         baseUrl = v;
-    });
+    });*/
 
 })(this);
