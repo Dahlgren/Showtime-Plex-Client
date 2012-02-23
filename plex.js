@@ -36,11 +36,11 @@
     }
 
     function getIcon(item) {
-        if (item.@thumb != null || item.@thumb != "")
+        if (item.@thumb != null && item.@thumb.toString() != "")
             return baseUrl + item.@thumb;
-        if (item.@art != null || item.@art != "")
+        if (item.@art != null && item.@art.toString() != "")
             return baseUrl + item.@art;
-        if (item.@banner != null || item.@banner != "")
+        if (item.@banner != null && item.@banner.toString() != "")
             return baseUrl + item.@banner;
         return plugin.path + "plex-logo.png";
     }
@@ -51,13 +51,13 @@
 
         var doc = new XML(showtime.httpGet(baseUrl + key).toString());
 
-        page.metadata.logo = baseUrl + doc.@thumb
-        page.metadata.title = doc.@title2;
+        page.metadata.logo = getIcon(doc);
+        page.metadata.title = doc.@title2.toString();
 
         for each (var season in doc.Directory) {
             var metadata = {
-                title: season.@title,
-                description: season.@summary,
+                title: season.@title.toString(),
+                description: season.@summary.toString(),
                 icon: getIcon(season)
             };
             page.appendItem("plex:season:" + season.@key, "directory", metadata);
@@ -71,14 +71,14 @@
 
         var doc = new XML(showtime.httpGet(baseUrl + key).toString());
 
-        page.metadata.logo = baseUrl + doc.@thumb
-        page.metadata.title = doc.@title2;
+        page.metadata.logo = getIcon(doc);
+        page.metadata.title = doc.@title2.toString();
         
         var showName;
         if (doc.@parentTitle != "")
-            showName = doc.@parentTitle;
+            showName = doc.@parentTitle.toString();
         else
-            showName = doc.@title2;
+            showName = doc.@title2.toString();
 
         for each (var video in doc.Video) {
             var numbering;
@@ -113,19 +113,19 @@
 
             for each (var video in doc.Video) {
                 var metadata = {
-                    title: video.@title,
-                    description: video.@summary,
+                    title: video.@title.toString(),
+                    description: video.@summary.toString(),
                     icon: getIcon(video)
                 };
                 var url = baseUrl + video.Media.Part[0].@key;
-                page.appendItem(getVideo(url, video.@title), "video", metadata);
+                page.appendItem(getVideo(url, video.@title.toString()), "video", metadata);
             }
         } else if (doc.@viewGroup == "show") {
             page.contents = "items";
             for each (var show in doc.Directory) {
                 var metadata = {
-                    title: show.@title,
-                    description: show.@summary,
+                    title: show.@title.toString(),
+                    description: show.@summary.toString(),
                     icon: getIcon(show)
                 };
                 page.appendItem("plex:show:" + show.@key, "directory", metadata);
@@ -141,11 +141,11 @@
         var doc = new XML(showtime.httpGet(baseUrl + "/library/sections/").toString());
 
         page.metadata.logo = plugin.path + "plex-logo.png";
-        page.metadata.title = doc.@title1;
+        page.metadata.title = doc.@title1.toString();
 
         for each (var section in doc.Directory) {
             var metadata = {
-                title: section.@title,
+                title: section.@title.toString(),
                 icon: plugin.path + "plex-logo.png"
             };
             page.appendItem("plex:section:" + section.@key, "directory", metadata);
