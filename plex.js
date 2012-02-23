@@ -27,11 +27,11 @@
 
     function getIcon(item) {
         if (item.@thumb != null || item.@thumb != "")
-        return baseUrl + item.@thumb;
+            return baseUrl + item.@thumb;
         if (item.@art != null || item.@art != "")
-        return baseUrl + item.@art;
+            return baseUrl + item.@art;
         if (item.@banner != null || item.@banner != "")
-        return baseUrl + item.@banner;
+            return baseUrl + item.@banner;
         return plugin.path + "plex-logo.png";
     }
 
