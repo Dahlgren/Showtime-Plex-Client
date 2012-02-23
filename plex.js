@@ -19,12 +19,20 @@
  
 (function(plugin) {
 
+    // URL to backend, changed and populated by settings
     var baseUrl;
+    
     var settings = plugin.createSettings("Plex", plugin.path + "plex-logo.png", "Plex Client");
     settings.createString("baseUrl", "Backend Url including Port", "", function(v) {
         baseUrl = v;
     });
     
+    /**
+     * Display title for video during playback
+     *
+     * @param url URL to video
+     * @param title Title of video (to display in controls)
+     */
     function getVideo(url, title) {
         return "videoparams:" + showtime.JSONEncode({
             title: title,
@@ -35,6 +43,11 @@
         });
     }
 
+    /**
+     * Get available icon from backend or use the Plex logo
+     *
+     * @param item XML element to search for an image
+     */
     function getIcon(item) {
         if (item.@thumb != null && item.@thumb.toString() != "")
             return baseUrl + item.@thumb;
@@ -45,6 +58,9 @@
         return plugin.path + "plex-logo.png";
     }
 
+    /*
+     * View for a TV Show, lists seasons
+     */
     plugin.addURI("plex:show:([a-z0-9\/]*)", function(page, key) {            
         page.contents = "items";
         page.type = "directory";
@@ -65,6 +81,9 @@
         page.loading = false;
     });
 
+    /*
+     * View for a TV seasion, lists episodes
+     */
     plugin.addURI("plex:season:([A-Za-z0-9\/]*)", function(page, key) {            
         page.contents = "video";
         page.type = "directory";
@@ -153,7 +172,6 @@
         page.loading = false;
     });
 
-    //settings
     plugin.createService("Plex", "plex:start", "video", true, plugin.path + "plex-logo.png");
 
 })(this);
