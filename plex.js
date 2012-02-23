@@ -165,7 +165,7 @@
         for each (var section in doc.Directory) {
             var metadata = {
                 title: section.@title.toString(),
-                icon: plugin.path + "plex-logo.png"
+                icon: getIcon(section)
             };
             page.appendItem("plex:section:" + section.@key, "directory", metadata);
         }
