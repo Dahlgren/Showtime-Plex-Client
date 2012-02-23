@@ -24,6 +24,16 @@
     settings.createString("baseUrl", "Backend Url including Port", "", function(v) {
         baseUrl = v;
     });
+    
+    function getVideo(url, title) {
+        return "videoparams:" + showtime.JSONEncode({
+            title: title,
+            canonicalUrl: url,
+            sources: [{
+                url: url
+            }]
+        });
+    }
 
     function getIcon(item) {
         if (item.@thumb != null || item.@thumb != "")
@@ -71,7 +81,7 @@
                 icon: getIcon(video)
             };
             var url = baseUrl + video.Media.Part[0].@key;
-            page.appendItem(url, "video", metadata);
+            page.appendItem(getVideo(url, video.@title), "video", metadata);
         }
         page.loading = false;
     });
@@ -95,7 +105,7 @@
                     icon: getIcon(video)
                 };
                 var url = baseUrl + video.Media.Part[0].@key;
-                page.appendItem(url, "video", metadata);
+                page.appendItem(getVideo(url, video.@title), "video", metadata);
             }
         } else if (doc.@viewGroup == "show") {
             page.contents = "items";
