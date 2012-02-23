@@ -16,47 +16,51 @@
  *  limitations under the License.
  *
  */
-
+ 
 (function(plugin) {
 
-    var baseUrl = "";
-    
+    var baseUrl;
+    var settings = plugin.createSettings("Plex", plugin.path + "plex-logo.png", "Plex Client");
+    settings.createString("baseUrl", "Backend Url including Port", "", function(v) {
+        baseUrl = v;
+    });
+
     function getIcon(item) {
         if (item.@thumb != null || item.@thumb != "")
-            return baseUrl + item.@thumb;
+        return baseUrl + item.@thumb;
         if (item.@art != null || item.@art != "")
-            return baseUrl + item.@art;
+        return baseUrl + item.@art;
         if (item.@banner != null || item.@banner != "")
-            return baseUrl + item.@banner;
+        return baseUrl + item.@banner;
         return plugin.path + "plex-logo.png";
     }
-    
+
     plugin.addURI("plex:show:([a-z0-9\/]*)", function(page, key) {            
         page.contents = "items";
         page.type = "directory";
 
         var doc = new XML(showtime.httpGet(baseUrl + key).toString());
-        
+
         page.metadata.logo = baseUrl + doc.@thumb
         page.metadata.title = doc.@title2;
 
         for each (var season in doc.Directory) {
-      	    var metadata = {
-       	        title: season.@title,
-       	        description: doc.@summary,
-       	        icon: getIcon(season)
-       	    };
-       	    page.appendItem("plex:season:" + season.@key, "directory", metadata);
-		}
+            var metadata = {
+                title: season.@title,
+                description: season.@summary,
+                icon: getIcon(season)
+            };
+            page.appendItem("plex:season:" + season.@key, "directory", metadata);
+        }
         page.loading = false;
     });
-    
+
     plugin.addURI("plex:season:([A-Za-z0-9\/]*)", function(page, key) {            
         page.contents = "video";
         page.type = "directory";
 
         var doc = new XML(showtime.httpGet(baseUrl + key).toString());
-        
+
         page.metadata.logo = baseUrl + doc.@thumb
         page.metadata.title = doc.@title2;
 
@@ -68,7 +72,7 @@
             };
             var url = baseUrl + video.Media.Part[0].@key;
             page.appendItem(url, "video", metadata);
-		}
+        }
         page.loading = false;
     });
 
@@ -77,32 +81,32 @@
         page.type = "directory";
 
         var doc = new XML(showtime.httpGet(baseUrl + "/library/sections/" + section + "/all/").toString());
-        
+
         page.metadata.logo = plugin.path + "plex-logo.png";
         page.metadata.title = doc.@title1;
 
-		if (doc.@viewGroup == "movie") {
-		    page.contents = "video";
-		    
-        	for each (var video in doc.Video) {
-        	    var metadata = {
-        	        title: video.@title,
-        	        description: video.@summary,
-        	        icon: getIcon(video)
-        	    };
-        	    var url = baseUrl + video.Media.Part[0].@key;
-        	    page.appendItem(url, "video", metadata);
-			}
-		} else if (doc.@viewGroup == "show") {
-		    page.contents = "items";
+        if (doc.@viewGroup == "movie") {
+            page.contents = "video";
+
+            for each (var video in doc.Video) {
+                var metadata = {
+                    title: video.@title,
+                    description: video.@summary,
+                    icon: getIcon(video)
+                };
+                var url = baseUrl + video.Media.Part[0].@key;
+                page.appendItem(url, "video", metadata);
+            }
+        } else if (doc.@viewGroup == "show") {
+            page.contents = "items";
             for each (var show in doc.Directory) {
-        	    var metadata = {
-        	        title: show.@title,
-        	        description: show.@summary,
-        	        icon: getIcon(show)
-        	    };
-        	    page.appendItem("plex:show:" + show.@key, "directory", metadata);
-			}
+                var metadata = {
+                    title: show.@title,
+                    description: show.@summary,
+                    icon: getIcon(show)
+                };
+                page.appendItem("plex:show:" + show.@key, "directory", metadata);
+            }
         }
         page.loading = false;
     });
@@ -112,7 +116,7 @@
         page.contents = "items";
 
         var doc = new XML(showtime.httpGet(baseUrl + "/library/sections/").toString());
-        
+
         page.metadata.logo = plugin.path + "plex-logo.png";
         page.metadata.title = doc.@title1;
 
@@ -128,16 +132,5 @@
 
     //settings
     plugin.createService("Plex", "plex:start", "video", true, plugin.path + "plex-logo.png");
-    /*plugin.settings = plugin.createSettings("Plex", "video", plugin.path + "plex-logo.png", "Plex Client");
-    plugin.settings.createInfo("info", plugin.path + "plex-logo.png", "Plex Client");
-
-    plugin.settings.createBool("enabled", "Plex", false, function(v) {
-        plugin.config.URIRouting = v;
-        plugin.service.enabled = v;
-    });
-    
-    plugin.settings.createString("baseUrl", "Backend Url including Port", "", function(v) {
-        baseUrl = v;
-    });*/
 
 })(this);
