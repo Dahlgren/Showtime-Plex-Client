@@ -73,15 +73,28 @@
 
         page.metadata.logo = baseUrl + doc.@thumb
         page.metadata.title = doc.@title2;
+        
+        var showName;
+        if (doc.@parentTitle != "")
+            showName = doc.@parentTitle;
+        else
+            showName = doc.@title2;
 
         for each (var video in doc.Video) {
+            var numbering;
+            if (video.@parentIndex != null && video.@parentIndex.toString() != "")
+                numbering = video.@parentIndex + "x" + video.@index;
+            else
+                numbering = doc.@parentIndex + "x" + video.@index;
+            
+            var title = numbering + " - " + video.@title;
             var metadata = {
-                title: video.@title,
+                title: title,
                 description: video.@summary,
                 icon: getIcon(video)
             };
             var url = baseUrl + video.Media.Part[0].@key;
-            page.appendItem(getVideo(url, video.@title), "video", metadata);
+            page.appendItem(getVideo(url, showName + " - " + title), "video", metadata);
         }
         page.loading = false;
     });
