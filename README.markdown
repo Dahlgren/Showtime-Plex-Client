@@ -1,4 +1,4 @@
-Simple plugin for communicating with a Plex Media Server. Requires setting the url to the Media Server in the settings.
+Simple plugin for communicating with a Plex Media Server. Requires myPlex.
 
 ## Features currently supported:
 - Movies
