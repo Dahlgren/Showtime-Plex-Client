@@ -219,7 +219,7 @@
     }
     
     function get_image_url(url) {
-	    return this.currentServerUrl + url + "&X-Plex-Token=" + currentServerToken;
+	    return this.currentServerUrl + url + "?X-Plex-Token=" + currentServerToken;
     }
     
     function get_video_url(url) {
